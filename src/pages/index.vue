@@ -153,7 +153,7 @@ const countryPagination = ref({
 
 const countryTableConfig = ref({
     headers: [
-        { title: 'Name', key: 'countryName' },
+        { title: 'Name', key: 'name' },
     ],
     filters: [
         { type: 'text', key: 'name', label: 'Name' },

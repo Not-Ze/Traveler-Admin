@@ -45,10 +45,10 @@ const pagination = ref({
 
 const tableConfig = ref({
   headers: [
-    { title: 'Name', key: 'countryName' },
+    { title: 'Name', key: 'name' },
   ],
   filters: [
-    { type: 'text', key: 'name', label: 'Name' },
+    { type: 'text', key: 'search', label: 'Name' },
   ],
   actions: [
     { name: 'view', icon: 'mdi-eye', color: 'blue' },
@@ -75,10 +75,19 @@ const handlePageChange = (newPagination) => {
 const handleAction = async ({ name, item }) => {
   switch (name) {
     case 'view':
-      router.push(`/countries/${item.id}`);
+      // Navigate to cities list, filtered by country_id, mimicking Postman request URL
+      router.push({
+        path: '/cities',
+        query: {
+          search: '',
+          country_id: item.id,
+          page: 1,
+        },
+      });
       break;
     case 'edit':
-      router.push(`/countries/${item.id}/edit`);
+      // Navigate to the Edit Country form with a query parameter
+      router.push({ path: '/countries/edit', query: { country_id: item.id } });
       break;
     case 'delete':
       if (confirm('Are you sure you want to delete this country?')) {

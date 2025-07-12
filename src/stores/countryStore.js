@@ -67,7 +67,7 @@ export const useCountryStore = defineStore("country", {
             try {
                 this.isLoading = true;
                 this.error = null;
-                
+
                 const params = {
                     page,
                     per_page: perPage,
@@ -75,7 +75,7 @@ export const useCountryStore = defineStore("country", {
 
                 for (const key in filters) {
                     if (filters[key] && filters[key] !== 'All') {
-                        params[`filter[${key}]`] = filters[key];
+                        params[`${key}`] = filters[key];
                     }
                 }
 
@@ -88,6 +88,7 @@ export const useCountryStore = defineStore("country", {
                 this.countries = response.data.data;
                 console.log("Countries fetched:", this.countries);
                 this.paginationMeta = response.data.meta;
+                console.log("Pagination metadata:", this.paginationMeta);
             } catch (error) {
                 this.error = error.response?.data?.message || error.message;
             } finally {

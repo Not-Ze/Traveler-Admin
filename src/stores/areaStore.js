@@ -75,7 +75,7 @@ export const useAreaStore = defineStore("area", {
 
                 for (const key in filters) {
                     if (filters[key]) {
-                        params[`filter[${key}]`] = filters[key];
+                        params[`${key}`] = filters[key];
                     }
                 }
 

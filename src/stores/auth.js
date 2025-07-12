@@ -36,7 +36,6 @@ export const useAuthStore = defineStore("auth", {
                 this.user = userData;
 
                 Cookies.set("token", token, {
-                    expires: 7,
                     secure: window.location.protocol === 'https:', // Ensure this is appropriate for your setup
                     sameSite: "Strict"
                 });

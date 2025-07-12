@@ -1,7 +1,12 @@
 <template>
-    <v-container class="fill-height d-flex align-center justify-center">
+  <div class="w-100 text-left mt-4 ml-4 ">
+    <v-btn icon @click="goBack">
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
+  </div>
+   <v-container class="fill-height d-flex flex-column align-center justify-center">
         <v-card max-width="400" class="w-100 pa-4">
-            <v-card-title class="text-h4 font-weight-bold mb-4">Country</v-card-title>
+        <v-card-title class="text-h4 font-weight-bold mb-4">Add Country</v-card-title>
             <v-card-text class="pa-0">
                 <v-form @submit.prevent="addCountry">
                     <v-text-field
@@ -18,6 +23,8 @@
 </template>
 
 <script>
+import { useCountryStore } from '../../stores/countryStore.js';
+
 export default {
     name: "AddCountry",
     data() {
@@ -26,10 +33,22 @@ export default {
         };
     },
     methods: {
-        addCountry() {
+        // Navigate back
+        goBack() {
+          this.$router.back();
+        },
+        // Use Pinia store to add a country
+        async addCountry() {
             if (this.CountryName.trim()) {
-                console.log("Country added:", this.CountryName);
-                this.CountryName = ""; // Clear input after submission
+                const countryStore = useCountryStore();
+                try {
+                    await countryStore.addCountry({ name: this.CountryName });
+                    this.CountryName = ""; // Clear input after submission
+                    // Navigate to country list page
+                    this.$router.push('/countries');
+                } catch (error) {
+                    alert(error.response?.data?.message || error.message);
+                }
             } else {
                 alert("Please enter a Country name.");
             }

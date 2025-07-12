@@ -3,7 +3,7 @@
     <!-- Header Section -->
     <v-row class="mb-6">
       <v-col cols="8">
-        <h1 class="text-h4 font-weight-bold">Cities in {{ country.countryName }}</h1>
+        <h1 class="text-h4 font-weight-bold">Cities in {{ country.name }}</h1>
       </v-col>
       <v-col cols="4" class="text-right">
         <v-btn color="primary" class="white--text" elevation="2" @click="addCity">
@@ -37,33 +37,37 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useCityStore } from '../../../stores/cityStore';
-import { useCountryStore } from '../../../stores/countryStore';
+import { useCityStore } from '../../stores/cityStore';
+import { useCountryStore } from '../../stores/countryStore';
 import { storeToRefs } from 'pinia';
-import Table from '../../../components/Table.vue';
+import Table from '../../components/Table.vue';
 
 const route = useRoute();
 const router = useRouter();
 const cityStore = useCityStore();
 const countryStore = useCountryStore();
 
-const countryId = computed(() => route.params.id);
+// Get country_id from query string
+const countryId = computed(() => route.query.country_id);
 
 const { cities, isLoading, paginationMeta } = storeToRefs(cityStore);
 const { currentCountry: country, isLoading: countryLoading } = storeToRefs(countryStore);
 
-const filters = ref({});
+// Initialize search filter from query param
+const filters = ref({ search: route.query.search || '' });
+
+// Initialize pagination from query param
 const pagination = ref({
-  page: 1,
+  page: Number(route.query.page) || 1,
   perPage: 10,
 });
 
 const tableConfig = ref({
   headers: [
-    { title: 'Name', key: 'cityName' },
+    { title: 'Name', key: 'name' },
   ],
   filters: [
-    { type: 'text', key: 'name', label: 'City Name' },
+    { type: 'text', key: 'search', label: 'City Name' },
   ],
   actions: [
     { name: 'view', icon: 'mdi-eye', color: 'blue' },
@@ -80,21 +84,30 @@ const fetchCitiesData = () => {
 const handleFilterChange = (newFilters) => {
   filters.value = newFilters;
   pagination.value.page = 1;
+  // Reflect filter change in URL
+  router.replace({ query: { search: filters.value.search, country_id: countryId.value, page: 1 } });
   fetchCitiesData();
 };
 
 const handlePageChange = (newPagination) => {
   pagination.value = newPagination;
+  // Reflect page change in URL
+  router.replace({ query: { search: filters.value.search, country_id: countryId.value, page: pagination.value.page } });
   fetchCitiesData();
 };
 
 const handleAction = async ({ name, item }) => {
   switch (name) {
     case 'view':
-      router.push(`/countries/${countryId.value}/${item.id}`);
+      // Navigate to areas list filtered by city_id
+      router.push({
+        path: '/areas',
+        query: { search: '', city_id: item.id, is_recommended: '', page: 1 }
+      });
       break;
     case 'edit':
-      router.push(`/countries/${countryId.value}/cities/${item.id}/edit`);
+      // Navigate to the Edit City form with query params
+      router.push({ path: '/cities/edit', query: { city_id: item.id, country_id: countryId.value } });
       break;
     case 'delete':
       if (confirm('Are you sure you want to delete this city?')) {
@@ -105,8 +118,9 @@ const handleAction = async ({ name, item }) => {
   }
   };
 
+// Navigate to add city, preserving country_id
 const addCity = () => {
-  router.push({ path: '/cities/add', query: { countryId: countryId.value } });
+  router.push({ path: '/cities/create', query: { country_id: countryId.value } });
 };
 
 onMounted(() => {

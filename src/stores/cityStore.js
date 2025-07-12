@@ -68,7 +68,7 @@ export const useCityStore = defineStore("city", {
             try {
                 this.isLoading = true;
                 this.error = null;
-                
+
                 const params = {
                     page,
                     per_page: perPage,
@@ -76,7 +76,7 @@ export const useCityStore = defineStore("city", {
 
                 for (const key in filters) {
                     if (filters[key] && filters[key] !== 'All') {
-                        params[`filter[${key}]`] = filters[key];
+                        params[`${key}`] = filters[key];
                     }
                 }
 

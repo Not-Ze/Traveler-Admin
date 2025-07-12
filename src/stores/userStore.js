@@ -80,8 +80,8 @@ export const useUserStore = defineStore("user", {
                     `Bearer ${Cookies.get("token")}`,
                                 );
 
-                this.users = response.data;
-                console.log(response.data);
+                this.users = response.data.data;
+                console.log(response.data.data);
                 this.paginationMeta = response.data.meta;
             } catch (error) {
                 this.error = error.response?.data?.message || error.message;

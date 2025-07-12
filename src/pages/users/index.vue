@@ -12,7 +12,7 @@
       </v-btn>
     </v-col>
     </v-row>
-  
+
     <!-- Table Component -->
     <Table
     :items="users"
@@ -25,24 +25,24 @@
     />
   </v-container>
   </template>
-  
+
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserStore } from '../../stores/userStore';
   import { storeToRefs } from 'pinia';
   import Table from '../../components/Table.vue';
-  
+
   const router = useRouter();
   const userStore = useUserStore();
   const { users, isLoading, paginationMeta } = storeToRefs(userStore);
-  
+
   const filters = ref({});
   const pagination = ref({
   page: 1,
   perPage: 10,
   });
-  
+
   const tableConfig = ref({
   headers: [
     { title: 'Name', key: 'name' },
@@ -59,26 +59,26 @@
     { name: 'unban', icon: 'mdi-check-circle', color: 'green', condition: (item) => item.status === 'banned' },
   ],
   });
-  
+
   const fetchUsersData = () => {
   userStore.fetchUsers(pagination.value.page, pagination.value.perPage, filters.value);
   };
-  
+
   const handleFilterChange = (newFilters) => {
   filters.value = newFilters;
   pagination.value.page = 1; // Reset to first page on filter change
   fetchUsersData();
   };
-  
+
   const handlePageChange = (newPagination) => {
   pagination.value = newPagination;
   fetchUsersData();
   };
-  
+
   const handleAction = async ({ name, item }) => {
   switch (name) {
     case 'view':
-    router.push(`/users/${item.id}`);
+    router.push({ name: '/users/[id]', params: { id: item.id } });
     break;
     case 'edit':
     router.push(`/users/${item.id}/edit`);
@@ -95,17 +95,14 @@
     break;
   }
   };
-  
-  const addUser = () => {
-  router.push('/users/add');
-  };
-  
+
+
   onMounted(() => {
   fetchUsersData();
   console.log(users.value);
   });
   </script>
-  
+
   <style scoped>
   .text-right {
   text-align: right;

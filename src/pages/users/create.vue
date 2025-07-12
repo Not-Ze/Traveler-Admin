@@ -50,6 +50,7 @@
 <script>
 import { useUserStore } from '@/stores/userStore';
 import { mapState } from 'pinia';
+import { useToast } from 'vue-toastification';
 
 export default {
     name: "AddUser",
@@ -72,18 +73,22 @@ export default {
     },
     methods: {
         async handleSubmit() {
+            const toast = useToast();
             this.error = null;
             if (this.form.password !== this.form.password_confirmation) {
                 this.error = "Passwords do not match.";
+                toast.error(this.error);
                 return;
             }
             const userStore = useUserStore();
             try {
                 await userStore.addUser(this.form);
                 await userStore.fetchUsers(); // Refresh the user list
+                toast.success("User added successfully!");
                 this.$router.push('/users');
             } catch (error) {
                 this.error = error.message || "Failed to add user.";
+                toast.error(this.error);
                 console.error("Failed to add user:", error);
             }
         },
