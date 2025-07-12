@@ -206,6 +206,24 @@ export const useUserStore = defineStore("user", {
                 throw error;
             }
         },
+        async deleteUser(userId) {
+            try {
+                this.isLoading = true;
+                const response = await ApiAxios.delete(
+                    userId,
+                    "users",
+                    `Bearer ${Cookies.get("token")}`
+                );
+                // Remove user from local state
+                this.users = this.users.filter((u) => u.id !== userId);
+                return response;
+            } catch (error) {
+                this.error = error.response?.data?.message || error.message;
+                throw error;
+            } finally {
+                this.isLoading = false;
+            }
+        },
         saveState(filters, pagination) {
             this.filters = { ...filters }
             this.pagination = { ...pagination }

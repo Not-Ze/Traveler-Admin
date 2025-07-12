@@ -139,7 +139,7 @@ export const useAreaStore = defineStore("area", {
         async deleteArea(areaId) {
             try {
                 this.isLoading = true;
-                await ApiAxios.destroy(
+                await ApiAxios.delete(
                     areaId,
                     "areas",
                     `Bearer ${Cookies.get("token")}`

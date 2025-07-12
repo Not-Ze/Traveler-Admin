@@ -23,6 +23,11 @@
       @filter-change="handleFilterChange"
       @action="handleAction"
     />
+    <DeleteConfirmationDialog
+      v-model="deleteDialogVisible"
+      :itemName="deleteItemName"
+      @confirm="handleDelete"
+    />
   </v-container>
 </template>
 
@@ -32,6 +37,8 @@ import { useRouter } from 'vue-router';
 import { useCountryStore } from '../../stores/countryStore';
 import { storeToRefs } from 'pinia';
 import Table from '../../components/Table.vue';
+import DeleteConfirmationDialog from '../../components/DeleteConfirmationDialog.vue';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
 const countryStore = useCountryStore();
@@ -72,10 +79,14 @@ const handlePageChange = (newPagination) => {
   fetchCountriesData();
 };
 
-const handleAction = async ({ name, item }) => {
+const toast = useToast();
+const deleteDialogVisible = ref(false);
+const deleteItemId = ref(null);
+const deleteItemName = ref('');
+
+const handleAction = ({ name, item }) => {
   switch (name) {
     case 'view':
-      // Navigate to cities list, filtered by country_id, mimicking Postman request URL
       router.push({
         path: '/cities',
         query: {
@@ -86,15 +97,25 @@ const handleAction = async ({ name, item }) => {
       });
       break;
     case 'edit':
-      // Navigate to the Edit Country form with a query parameter
       router.push({ path: '/countries/edit', query: { country_id: item.id } });
       break;
     case 'delete':
-      if (confirm('Are you sure you want to delete this country?')) {
-        await countryStore.deleteCountry(item.id);
-        fetchCountriesData();
-      }
+      deleteItemId.value = item.id;
+      deleteItemName.value = item.name;
+      deleteDialogVisible.value = true;
       break;
+  }
+};
+
+const handleDelete = async () => {
+  try {
+    await countryStore.deleteCountry(deleteItemId.value);
+    toast.success('Country deleted successfully!');
+    fetchCountriesData();
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message || 'Failed to delete country.');
+  } finally {
+    deleteDialogVisible.value = false;
   }
 };
 

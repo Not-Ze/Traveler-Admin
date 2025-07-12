@@ -37,6 +37,7 @@
 
 <script>
 import { useAreaStore } from '../../stores/areaStore';
+import { useToast } from 'vue-toastification';
 export default {
   name: 'EditArea',
   data() {
@@ -68,6 +69,7 @@ export default {
   methods: {
     async handleSubmit() {
       const areaStore = useAreaStore();
+      const toast = useToast();
       const cityId = this.$route.query.city_id;
       const areaId = this.$route.query.area_id;
       if (this.form.areaName.trim() && this.form.description.trim()) {
@@ -78,12 +80,13 @@ export default {
             description: this.form.description,
             is_recommended: this.form.isRecommended,
           });
+          toast.success('Area updated successfully!');
           this.$router.push({ path: '/areas', query: { city_id: cityId } });
         } catch (error) {
-          alert(error.response?.data?.message || error.message);
+          toast.error(error.response?.data?.message || error.message);
         }
       } else {
-        alert('Please fill out all fields.');
+        toast.error('Please fill out all fields.');
       }
     },
     // Navigate back

@@ -25,6 +25,7 @@
 
 <script>
 import { useCityStore } from '../../stores/cityStore';
+import { useToast } from 'vue-toastification';
 export default {
   name: 'EditCity',
   data() {
@@ -51,18 +52,20 @@ export default {
   methods: {
     async handleSubmit() {
       const store = useCityStore();
+      const toast = useToast();
       const cityId = this.$route.query.city_id;
       const countryId = this.$route.query.country_id;
       if (this.form.cityName.trim()) {
         try {
           await store.updateCity(cityId, { name: this.form.cityName });
+          toast.success('City updated successfully!');
           this.form.cityName = '';
           this.$router.push({ path: '/cities', query: { country_id: countryId } });
         } catch (error) {
-          alert(error.response?.data?.message || error.message);
+          toast.error(error.response?.data?.message || error.message);
         }
       } else {
-        alert('Please enter a city name.');
+        toast.error('Please enter a city name.');
       }
     },
     // Navigate back with fallback to cities list

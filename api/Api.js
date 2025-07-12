@@ -8,6 +8,22 @@ export const ApiAxios = axios.create({
     baseURL,
     // timeout: 10000, // Example: Add a timeout
 });
+// Add a response interceptor to handle 401 errors
+import { useAuthStore } from "@/stores/auth";
+ApiAxios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            // Clear any existing auth data (e.g., token from cookies or localStorage)
+            const authStore = useAuthStore();
+            authStore.logout(); // Assuming you have a logout action in your auth store
+
+            // Redirect to the login page
+            router.push("/login");
+        }
+        return Promise.reject(error);
+    }
+);
 
 // --- Helper Functions ---
 const setupHeaders = (token) => {

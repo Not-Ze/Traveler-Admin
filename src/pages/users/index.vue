@@ -81,7 +81,7 @@
     router.push({ name: '/users/[id]', params: { id: item.id } });
     break;
     case 'edit':
-    router.push(`/users/${item.id}/edit`);
+    router.push({ path: '/users/edit', query: { id: item.id } });
     break;
     case 'ban':
     if (confirm('Are you sure you want to ban this user?')) {

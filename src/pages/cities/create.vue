@@ -25,6 +25,7 @@
 
 <script>
 import { useCityStore } from '../../stores/cityStore';
+import { useToast } from 'vue-toastification';
 export default {
   name: 'AddCity',
   data() {
@@ -37,6 +38,7 @@ export default {
   methods: {
     async handleSubmit() {
       const cityStore = useCityStore();
+      const toast = useToast();
       const countryId = this.$route.query.country_id;
       if (this.form.cityName.trim()) {
         try {
@@ -44,13 +46,14 @@ export default {
             name: this.form.cityName,
             country_id: countryId,
           });
+          toast.success('City added successfully!');
           this.form.cityName = '';
           this.$router.push({ path: '/cities', query: { country_id: countryId } });
         } catch (error) {
-          alert(error.response?.data?.message || error.message);
+          toast.error(error.response?.data?.message || error.message);
         }
       } else {
-        alert('Please enter a city name.');
+        toast.error('Please enter a city name.');
       }
     },
     goBack() {

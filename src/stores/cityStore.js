@@ -135,7 +135,7 @@ export const useCityStore = defineStore("city", {
         async deleteCity(cityId) {
             try {
                 this.isLoading = true;
-                await ApiAxios.destroy(
+                await ApiAxios.delete(
                     cityId,
                     "cities",
                     `Bearer ${Cookies.get("token")}`

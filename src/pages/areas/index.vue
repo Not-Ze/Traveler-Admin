@@ -23,6 +23,12 @@
       @filter-change="handleFilterChange"
       @action="handleAction"
     />
+    <DeleteConfirmationDialog
+      v-model="deleteDialogVisible"
+      :itemName="deleteItemName"
+      itemLabel="area"
+      @confirm="handleDelete"
+    />
   </v-container>
   <v-container v-else-if="areaLoading || cityLoading">
     <v-row justify="center" class="mt-16">
@@ -41,6 +47,8 @@ import { useAreaStore } from '../../stores/areaStore';
 import { useCityStore } from '../../stores/cityStore';
 import { storeToRefs } from 'pinia';
 import Table from '../../components/Table.vue';
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue';
+import { useToast } from 'vue-toastification';
 
 const route = useRoute();
 const router = useRouter();
@@ -114,21 +122,36 @@ const handlePageChange = (newPagination) => {
   fetchAreasData();
 };
 
-const handleAction = async ({ name, item }) => {
+const deleteDialogVisible = ref(false);
+const deleteItemId = ref(null);
+const deleteItemName = ref('');
+const toast = useToast();
+
+const handleAction = ({ name, item }) => {
   switch (name) {
     case 'view':
       router.push(`/areas/${cityId.value}/${item.id}`);
       break;
     case 'edit':
-      // Navigate to Edit Area form with query params
       router.push({ path: '/areas/edit', query: { city_id: cityId.value, area_id: item.id } });
       break;
     case 'delete':
-      if (confirm('Are you sure you want to delete this area?')) {
-        await areaStore.deleteArea(item.id);
-        fetchAreasData();
-      }
+      deleteItemId.value = item.id;
+      deleteItemName.value = item.name;
+      deleteDialogVisible.value = true;
       break;
+  }
+};
+
+const handleDelete = async () => {
+  try {
+    await areaStore.deleteArea(deleteItemId.value);
+    toast.success('Area deleted successfully!');
+    fetchAreasData();
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message || 'Failed to delete area.');
+  } finally {
+    deleteDialogVisible.value = false;
   }
 };
 

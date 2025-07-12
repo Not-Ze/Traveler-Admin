@@ -25,12 +25,7 @@
             <v-col cols="8">
                 <h1 class="text-h4 font-weight-bold">Users Management</h1>
             </v-col>
-            <v-col cols="4" class="text-right">
-                <v-btn color="primary" class="white--text" elevation="2" to="/users/create">
-                    Add User
-                    <v-icon right>mdi-plus</v-icon>
-                </v-btn>
-            </v-col>
+
         </v-row>
         <Table
             :items="users"
@@ -49,12 +44,7 @@
             <v-col cols="8">
                 <h1 class="text-h4 font-weight-bold">Countries Management</h1>
             </v-col>
-            <v-col cols="4" class="text-right">
-                <v-btn color="primary" class="white--text" elevation="2" to="/countries/create">
-                    Add Country
-                    <v-icon right>mdi-plus</v-icon>
-                </v-btn>
-            </v-col>
+
         </v-row>
         <Table
             :items="countries"
@@ -64,6 +54,12 @@
             @page-change="handleCountryPageChange"
             @filter-change="handleCountryFilterChange"
             @action="handleCountryAction"
+        />
+        <DeleteConfirmationDialog
+            v-model="deleteDialogVisible"
+            :itemName="deleteItemName"
+            itemLabel="country"
+            @confirm="handleDelete"
         />
     </v-container>
 </template>
@@ -75,6 +71,8 @@ import { useUserStore } from '../stores/userStore';
 import { useCountryStore } from '../stores/countryStore';
 import { storeToRefs } from 'pinia';
 import Table from '../components/Table.vue';
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
 
@@ -126,7 +124,7 @@ const handleUserAction = async ({ name, item }) => {
             router.push(`/users/${item.id}`);
             break;
         case 'edit':
-            router.push(`/users/${item.id}/edit`);
+            router.push({ path: '/users/edit', query: { id: item.id } });
             break;
         case 'ban':
             if (confirm('Are you sure you want to ban this user?')) {
@@ -180,20 +178,43 @@ const handleCountryPageChange = (newPagination) => {
     fetchCountriesData();
 };
 
-const handleCountryAction = async ({ name, item }) => {
+const deleteDialogVisible = ref(false);
+const deleteItemId = ref(null);
+const deleteItemName = ref('');
+const toast = useToast();
+
+const handleCountryAction = ({ name, item }) => {
     switch (name) {
         case 'view':
-            router.push(`/countries/${item.id}`);
+            router.push({
+                path: '/cities',
+                query: {
+                    search: '',
+                    country_id: item.id,
+                    page: 1,
+                },
+            });
             break;
         case 'edit':
-            router.push(`/countries/${item.id}/edit`);
+            router.push({ path: '/countries/edit', query: { country_id: item.id } });
             break;
         case 'delete':
-            if (confirm('Are you sure you want to delete this country?')) {
-                await countryStore.deleteCountry(item.id);
-                fetchCountriesData();
-            }
+            deleteItemId.value = item.id;
+            deleteItemName.value = item.name;
+            deleteDialogVisible.value = true;
             break;
+    }
+};
+
+const handleDelete = async () => {
+    try {
+        await countryStore.deleteCountry(deleteItemId.value);
+        toast.success('Country deleted successfully!');
+        fetchCountriesData();
+    } catch (error) {
+        toast.error(error.response?.data?.message || error.message || 'Failed to delete country.');
+    } finally {
+        deleteDialogVisible.value = false;
     }
 };
 

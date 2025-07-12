@@ -146,16 +146,20 @@
       </VCol>
     </VRow>
 
-    <DeleteConfirmationDialog
+<DeleteConfirmationDialog
       v-model="isDeleteDialogOpen"
-      :item-name="user?.name"
+      :itemName="user?.name"
+      itemLabel="user"
       @confirm="confirmDelete"
     />
   </VContainer>
 </template>
+
 <script setup>
 import { useUserStore } from '@/stores/userStore'
 import { VSkeletonLoader } from 'vuetify/components'
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue'
+import { useToast } from 'vue-toastification'
 
 const route = useRoute()
 const router = useRouter()
@@ -176,7 +180,7 @@ const statusColor = computed(() => {
 })
 
 function onEdit() {
-  router.push(`/users/${userId}/edit`)
+  router.push({ path: '/users/edit', query: { id: userId } })
 }
 
 function onDelete() {
@@ -184,10 +188,14 @@ function onDelete() {
 }
 
 async function confirmDelete() {
-  await userStore.deleteUser(userId)
-  isDeleteDialogOpen.value = false
+  const toast = useToast();
+  await userStore.deleteUser(userId);
+  isDeleteDialogOpen.value = false;
   if (!userStore.error) {
-    router.push('/users')
+    toast.success('User deleted successfully!');
+    router.push('/users');
+  } else {
+    toast.error(userStore.error || 'Failed to delete user.');
   }
 }
 

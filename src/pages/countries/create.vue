@@ -24,6 +24,7 @@
 
 <script>
 import { useCountryStore } from '../../stores/countryStore.js';
+import { useToast } from 'vue-toastification';
 
 export default {
     name: "AddCountry",
@@ -39,18 +40,19 @@ export default {
         },
         // Use Pinia store to add a country
         async addCountry() {
+            const toast = useToast();
             if (this.CountryName.trim()) {
                 const countryStore = useCountryStore();
                 try {
                     await countryStore.addCountry({ name: this.CountryName });
                     this.CountryName = ""; // Clear input after submission
-                    // Navigate to country list page
+                    toast.success("Country added successfully!");
                     this.$router.push('/countries');
                 } catch (error) {
-                    alert(error.response?.data?.message || error.message);
+                    toast.error(error.response?.data?.message || error.message);
                 }
             } else {
-                alert("Please enter a Country name.");
+                toast.error("Please enter a Country name.");
             }
         },
     },

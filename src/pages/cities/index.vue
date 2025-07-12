@@ -23,6 +23,12 @@
       @filter-change="handleFilterChange"
       @action="handleAction"
     />
+    <DeleteConfirmationDialog
+      v-model="deleteDialogVisible"
+      :itemName="deleteItemName"
+      itemLabel="city"
+      @confirm="handleDelete"
+    />
   </v-container>
   <v-container v-else-if="countryLoading">
     <v-row justify="center" class="mt-16">
@@ -41,6 +47,8 @@ import { useCityStore } from '../../stores/cityStore';
 import { useCountryStore } from '../../stores/countryStore';
 import { storeToRefs } from 'pinia';
 import Table from '../../components/Table.vue';
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue';
+import { useToast } from 'vue-toastification';
 
 const route = useRoute();
 const router = useRouter();
@@ -96,27 +104,41 @@ const handlePageChange = (newPagination) => {
   fetchCitiesData();
 };
 
-const handleAction = async ({ name, item }) => {
+const deleteDialogVisible = ref(false);
+const deleteItemId = ref(null);
+const deleteItemName = ref('');
+const toast = useToast();
+
+const handleAction = ({ name, item }) => {
   switch (name) {
     case 'view':
-      // Navigate to areas list filtered by city_id
       router.push({
         path: '/areas',
         query: { search: '', city_id: item.id, is_recommended: '', page: 1 }
       });
       break;
     case 'edit':
-      // Navigate to the Edit City form with query params
       router.push({ path: '/cities/edit', query: { city_id: item.id, country_id: countryId.value } });
       break;
     case 'delete':
-      if (confirm('Are you sure you want to delete this city?')) {
-        await cityStore.deleteCity(item.id);
-        fetchCitiesData();
-      }
+      deleteItemId.value = item.id;
+      deleteItemName.value = item.name;
+      deleteDialogVisible.value = true;
       break;
   }
-  };
+};
+
+const handleDelete = async () => {
+  try {
+    await cityStore.deleteCity(deleteItemId.value);
+    toast.success('City deleted successfully!');
+    fetchCitiesData();
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message || 'Failed to delete city.');
+  } finally {
+    deleteDialogVisible.value = false;
+  }
+};
 
 // Navigate to add city, preserving country_id
 const addCity = () => {

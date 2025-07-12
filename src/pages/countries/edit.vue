@@ -27,6 +27,7 @@
 
 <script>
 import { useCountryStore } from '../../stores/countryStore';
+import { useToast } from 'vue-toastification';
 export default {
   name: 'EditCountry',
   data() {
@@ -54,17 +55,19 @@ export default {
   methods: {
     async handleSubmit() {
       const store = useCountryStore();
+      const toast = useToast();
       // Read country_id from query parameter
       const id = this.$route.query.country_id;
       if (this.form.countryName.trim()) {
         try {
           await store.updateCountry(id, { name: this.form.countryName });
+          toast.success('Country updated successfully!');
           this.$router.push('/countries');
         } catch (error) {
-          alert(error.response?.data?.message || error.message);
+          toast.error(error.response?.data?.message || error.message);
         }
       } else {
-        alert('Please enter a country name.');
+        toast.error('Please enter a country name.');
       }
     },
     // Navigate back with fallback to countries list
