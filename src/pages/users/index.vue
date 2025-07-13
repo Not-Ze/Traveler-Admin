@@ -31,7 +31,9 @@
   import { useRouter } from 'vue-router';
   import { useUserStore } from '../../stores/userStore';
   import { storeToRefs } from 'pinia';
+
   import Table from '../../components/Table.vue';
+  import { useToast } from 'vue-toastification';
 
   const router = useRouter();
   const userStore = useUserStore();
@@ -75,25 +77,36 @@
   fetchUsersData();
   };
 
+  const toast = useToast();
   const handleAction = async ({ name, item }) => {
-  switch (name) {
-    case 'view':
-    router.push({ name: '/users/[id]', params: { id: item.id } });
-    break;
-    case 'edit':
-    router.push({ path: '/users/edit', query: { id: item.id } });
-    break;
-    case 'ban':
-    if (confirm('Are you sure you want to ban this user?')) {
-      await userStore.banUser(item.id);
+    switch (name) {
+      case 'view':
+        router.push({ name: '/users/[id]', params: { id: item.id } });
+        break;
+      case 'edit':
+        router.push({ path: '/users/edit', query: { id: item.id } });
+        break;
+      case 'ban':
+        if (confirm('Are you sure you want to ban this user?')) {
+          try {
+            await userStore.updateUser(item.id, { status: 'banned' });
+            toast.success('User banned successfully!');
+          } catch (error) {
+            toast.error(error?.message || 'Failed to ban user.');
+          }
+        }
+        break;
+      case 'unban':
+        if (confirm('Are you sure you want to unban this user?')) {
+          try {
+            await userStore.updateUser(item.id, { status: 'active' });
+            toast.success('User unbanned successfully!');
+          } catch (error) {
+            toast.error(error?.message || 'Failed to unban user.');
+          }
+        }
+        break;
     }
-    break;
-    case 'unban':
-    if (confirm('Are you sure you want to unban this user?')) {
-      await userStore.unbanUser(item.id);
-    }
-    break;
-  }
   };
 
 

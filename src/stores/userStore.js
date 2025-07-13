@@ -93,7 +93,7 @@ export const useUserStore = defineStore("user", {
             try {
                 this.isLoading = true;
                 const response = await ApiAxios.store(
-                    "register",
+                    "users",
                     userData,
                     `Bearer ${Cookies.get("token")}`
                 );

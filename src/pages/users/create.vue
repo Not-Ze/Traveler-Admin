@@ -34,12 +34,18 @@
                         type="password"
                         required
                     ></v-text-field>
-                    <v-select
-                        v-model="form.sex"
-                        :items="sexItems"
-                        label="Sex"
-                        required
-                    ></v-select>
+                <v-select
+                    v-model="form.sex"
+                    :items="sexItems"
+                    label="Sex"
+                    required
+                ></v-select>
+                <v-select
+                    v-model="form.user_type"
+                    :items="userTypeItems"
+                    label="User Type"
+                    required
+                ></v-select>
                     <v-btn type="submit" color="#d98b2b" block class="mt-4" :loading="isLoading">Add</v-btn>
                 </v-form>
             </v-card-text>
@@ -63,8 +69,10 @@ export default {
                 password: "",
                 password_confirmation: "",
                 sex: null,
+                user_type: null,
             },
             sexItems: ['male', 'female'],
+            userTypeItems: ['admin', 'user'],
             error: null,
         };
     },
