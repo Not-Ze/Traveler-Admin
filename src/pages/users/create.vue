@@ -9,42 +9,45 @@
                         v-model="form.name"
                         label="Name"
                         required
+                        :rules="[v => !!v || 'Name is required']"
                     ></v-text-field>
                     <v-text-field
                         v-model="form.email"
                         label="Email"
                         type="email"
                         required
+                        :rules="[v => /.+@.+\..+/.test(v) || 'E-mail must be valid']"
                     ></v-text-field>
                     <v-text-field
                         v-model="form.birth_date"
                         label="Birth Date"
                         type="date"
-                        required
+                        :rules="[v => !!v || 'Birth Date is required']"
+                        :max="new Date().toISOString().substr(0, 10)"
                     ></v-text-field>
                     <v-text-field
                         v-model="form.password"
                         label="Password"
                         type="password"
-                        required
+                        :rules="[v => !!v || 'Password is required']"
                     ></v-text-field>
                     <v-text-field
                         v-model="form.password_confirmation"
                         label="Confirm Password"
                         type="password"
-                        required
+                        :rules="[v => !!v || 'Password is required']"
                     ></v-text-field>
                 <v-select
                     v-model="form.sex"
                     :items="sexItems"
                     label="Sex"
-                    required
+                    :rules="[v => !!v || 'Sex is required']"
                 ></v-select>
                 <v-select
                     v-model="form.user_type"
                     :items="userTypeItems"
                     label="User Type"
-                    required
+                    :rules="[v => !!v || 'required']"
                 ></v-select>
                     <v-btn type="submit" color="#d98b2b" block class="mt-4" :loading="isLoading">Add</v-btn>
                 </v-form>
