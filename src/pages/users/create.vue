@@ -99,7 +99,7 @@ export default {
                 this.$router.push('/users');
             } catch (error) {
                 this.error = error.message || "Failed to add user.";
-                toast.error(this.error);
+                toast.error(userStore.error || this.error);
                 console.error("Failed to add user:", error);
             }
         },
