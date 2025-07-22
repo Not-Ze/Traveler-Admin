@@ -19,17 +19,22 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
+    '/areas/': RouteRecordInfo<'/areas/', '/areas', Record<never, never>, Record<never, never>>,
+    '/areas/create': RouteRecordInfo<'/areas/create', '/areas/create', Record<never, never>, Record<never, never>>,
+    '/areas/edit': RouteRecordInfo<'/areas/edit', '/areas/edit', Record<never, never>, Record<never, never>>,
+    '/cities/': RouteRecordInfo<'/cities/', '/cities', Record<never, never>, Record<never, never>>,
+    '/cities/create': RouteRecordInfo<'/cities/create', '/cities/create', Record<never, never>, Record<never, never>>,
+    '/cities/edit': RouteRecordInfo<'/cities/edit', '/cities/edit', Record<never, never>, Record<never, never>>,
     '/countries/': RouteRecordInfo<'/countries/', '/countries', Record<never, never>, Record<never, never>>,
-    '/countries/[id]/': RouteRecordInfo<'/countries/[id]/', '/countries/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
-    '/countries/[id]/[id]': RouteRecordInfo<'/countries/[id]/[id]', '/countries/:id/:id', { id: ParamValue<true>, id: ParamValue<true> }, { id: ParamValue<false>, id: ParamValue<false> }>,
-    '/countries/[id]/create': RouteRecordInfo<'/countries/[id]/create', '/countries/:id/create', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/countries/components/CountryFormDialog': RouteRecordInfo<'/countries/components/CountryFormDialog', '/countries/components/CountryFormDialog', Record<never, never>, Record<never, never>>,
     '/countries/components/DeleteConfirmationDialog': RouteRecordInfo<'/countries/components/DeleteConfirmationDialog', '/countries/components/DeleteConfirmationDialog', Record<never, never>, Record<never, never>>,
     '/countries/create': RouteRecordInfo<'/countries/create', '/countries/create', Record<never, never>, Record<never, never>>,
+    '/countries/edit': RouteRecordInfo<'/countries/edit', '/countries/edit', Record<never, never>, Record<never, never>>,
     '/login': RouteRecordInfo<'/login', '/login', Record<never, never>, Record<never, never>>,
     '/users/': RouteRecordInfo<'/users/', '/users', Record<never, never>, Record<never, never>>,
+    '/users/[id]': RouteRecordInfo<'/users/[id]', '/users/:id', { id: ParamValue<true> }, { id: ParamValue<false> }>,
     '/users/components/ConfirmationDialog': RouteRecordInfo<'/users/components/ConfirmationDialog', '/users/components/ConfirmationDialog', Record<never, never>, Record<never, never>>,
     '/users/create': RouteRecordInfo<'/users/create', '/users/create', Record<never, never>, Record<never, never>>,
-    '/users/usersDetails': RouteRecordInfo<'/users/usersDetails', '/users/usersDetails', Record<never, never>, Record<never, never>>,
+    '/users/edit': RouteRecordInfo<'/users/edit', '/users/edit', Record<never, never>, Record<never, never>>,
   }
 }

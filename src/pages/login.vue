@@ -6,7 +6,7 @@
                     <v-row no-gutters>
                         <v-col cols="12" md="4" class="d-none d-md-flex align-center justify-center mr-10">
                             <v-img
-                                src="https://images.unsplash.com/photo-1500835556837-99ac94a94552?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dHJhdmVsfGVufDB8fDB8fHww&w=1000&q=80"
+                                src="/src/assets/s.png"
                                 alt="Travel background" height="100%" cover></v-img>
                         </v-col>
                         <v-col cols="12" md="6">
@@ -21,9 +21,7 @@
                                     <h1 class="text-h5 font-weight-bold mb-4">
                                         Welcome Back!
                                     </h1>
-                                    <v-alert v-if="authStore.error" type="error" dense outlined class="mb-4">
-                                        {{ authStore.error }}
-                                    </v-alert>
+                                    
                                     <v-text-field 
                                         label="Email Address" 
                                         outlined 
@@ -73,7 +71,8 @@
 </template>
 
 <script>
-import { useAuthStore } from '@/stores/auth'; // Ensure this path is correct
+import { useAuthStore } from '@/stores/auth'; // Ensure this is correct
+import { useToast } from 'vue-toastification';
 
 export default {
     name: 'LoginPage',
@@ -84,14 +83,21 @@ export default {
     },
     setup() {
         const authStore = useAuthStore();
+        const toast = useToast();
         return {
             authStore,
+            toast,
         };
     },
     methods: {
         async handleLogin() {
-            await this.authStore.login();
-            // Navigation is handled within the store action upon successful login
+            try {
+                await this.authStore.login();
+                this.toast.success('Login successful!');
+                // Navigation is handled within the store action upon successful login
+            } catch (err) {
+                this.toast.error(this.authStore.error || 'Login failed. Please check your credentials.');
+            }
         },
     },
     created() {

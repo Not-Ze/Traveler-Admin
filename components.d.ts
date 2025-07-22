@@ -15,6 +15,7 @@ declare module 'vue' {
     Alert: typeof import('./src/components/Alert.vue')['default']
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
     ConfirmDialog: typeof import('./src/components/dialogs/ConfirmDialog.vue')['default']
+    DeleteConfirmationDialog: typeof import('./src/components/DeleteConfirmationDialog.vue')['default']
     EditDialog: typeof import('./src/components/user/EditDialog.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     PageTitleComponent: typeof import('./src/components/PageTitleComponent.vue')['default']
